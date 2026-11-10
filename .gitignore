@@ -1,0 +1,30 @@
+# data and model artifacts (never commit)
+data/*
+!data/MANIFEST.json
+models/
+*.gguf
+*.safetensors
+*.bin
+*.pt
+checkpoints/
+runs/
+vendor/
+
+# env / secrets
+.env
+.venv/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/
+
+# local assistant brief
+CLAUDE.md
