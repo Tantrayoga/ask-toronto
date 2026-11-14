@@ -44,6 +44,21 @@ Re-timed on an idle machine (85% memory free), fp32 vs bf16 weights:
 - bf16 is stable (no NaN, loss tracks fp32 within 0.01) and saves 4 GB, but it is not faster. MPS is compute-bound here.
 - Every config is well over the 3 h per-seed limit. Recommendation: train on Colab CUDA.
 
+### Colab T4 (2026-11-14, `notebooks/colab_timing.ipynb`)
+
+Same script and settings. fp32 weights with fp16 mixed precision, since the T4 has no bf16.
+Colab ran Python 3.13 with its own CUDA torch. HF stack pinned to the Mac versions.
+
+| Device | sec/step | Peak memory | Loss first 3 to last 3 | 2,500 x 2 ep | 2,500 x 3 ep | 3,000 x 3 ep |
+|---|---|---|---|---|---|---|
+| Tesla T4 (fp16 AMP) | 2.69 | 6.8 GB of 15 GB | 0.711 to 0.024 | ~1.9 h | ~2.8 h | ~3.4 h |
+
+- About 3.9x faster than the M4 Pro. No NaN. Loss tracks the Mac run closely.
+- Label masking checked again on CUDA. Only the SQL plus `<|im_end|>` carry loss.
+- Memory headroom means gradient checkpointing could be turned off for more speed. Test on real data first.
+- The estimate covers training steps only. Per-epoch val generation adds time on top.
+- Decision: train on free Colab, with a checkpoint every epoch saved to Drive. Eval and serving stay on the Mac.
+
 ## 3. GGUF via llama-cpp-python (`smoke_gguf.py`)
 
 | Variant | File size |
